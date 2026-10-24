@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Empadronamiento Provincial de Artesanos y Traductores Comunitarios</title>
+<style>
+:root{--navy:#0f2447;--blue:#2f6fdb;--deep:#1b4fa8;--sky:#eaf2ff;--ink:#1d2433;--line:#c9d9f3;--red:#b3261e;--ok:#1f7a4d}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:#dbe9ff linear-gradient(180deg,#5b9bf0 0,#a9cbfa 320px,#dbe9ff 700px,#eaf2ff 100%) no-repeat;color:var(--ink);font:16px/1.5 system-ui,sans-serif}
+header{position:relative;overflow:hidden;background:linear-gradient(135deg,#0a1a38,var(--navy) 60%,#16346b);color:#fff;padding:30px 16px 26px}
+header::before,header::after{content:"";position:absolute;top:0;height:100%;pointer-events:none}
+header::before{right:70px;width:150px;background:linear-gradient(135deg,#2f8cff,#0b4fb8);clip-path:polygon(45% 0,100% 0,55% 100%,0 100%)}
+header::after{right:-20px;width:130px;background:linear-gradient(135deg,#1b6fe0,#0a3f93);clip-path:polygon(45% 0,100% 0,55% 100%,0 100%)}
+header div,main{max-width:760px;margin:auto}
+header div{position:relative;z-index:1}
+h1{font-size:clamp(1.3rem,4.5vw,2rem);line-height:1.15;margin:0 0 10px}
+header p{display:inline-block;margin:0;padding-bottom:8px;border-bottom:3px solid #2f8cff;font-size:.95rem;max-width:90%}
+main{padding:20px 14px 40px}
+.card{background:rgba(255,255,255,.95);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:18px;box-shadow:0 4px 14px rgba(15,36,71,.12);overflow:hidden}
+h2{display:inline-block;min-width:70%;font-size:1.1rem;margin:0 0 16px -20px;padding:10px 24px 10px 20px;background:var(--blue);color:#fff;border-radius:0 999px 999px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{display:flex;flex-direction:column;gap:6px}
+.full{grid-column:1/-1}
+label{font-weight:650;color:var(--navy)}
+input,select{width:100%;font:inherit;padding:12px;border:1.5px solid #9fb3d6;border-radius:10px;min-height:48px;background:#fff}
+input:focus,select:focus{outline:3px solid #bcd3ff;border-color:var(--blue)}
+.hint{font-size:.88rem;color:#55627a;margin:0}
+.checkrow{display:flex;gap:10px;align-items:flex-start}
+.checkrow input{width:22px;height:22px;min-height:22px;margin-top:3px}
+button{font:inherit;font-weight:700;border:0;border-radius:12px;padding:13px 18px;min-height:48px;cursor:pointer}
+button:active{transform:scale(.98)}
+.primary{background:linear-gradient(135deg,var(--blue),var(--deep));color:#fff;width:100%;box-shadow:0 4px 10px rgba(47,111,219,.35)}
+.secondary{background:var(--sky);color:var(--blue);border:2px solid var(--blue);width:100%;margin-top:10px}
+.error{color:var(--red);font-size:.9rem;min-height:1.2em}
+.invalid{border-color:var(--red)!important;background:#fff8f8}
+.notice{padding:12px;border-radius:10px;background:#fff;color:var(--navy);border-left:4px solid var(--blue);margin:12px 0}
+.review{white-space:pre-wrap;background:#f7faff;border:1px solid var(--line);border-radius:10px;padding:12px}
+.net{padding:10px 12px;border-radius:10px;font-size:.92rem;margin:12px 0}
+.net.online{background:#e3f6ec;color:var(--ok)}
+.net.offline{background:#fff4d6;color:#7a5200}
+footer{text-align:center;color:#2b3f66;font-size:.85rem;padding:0 12px 24px}
+@media(max-width:560px){.grid{grid-template-columns:1fr}.full{grid-column:auto}.card{padding:16px}h2{margin-left:-16px;padding-left:16px}header::before,header::after{opacity:.45}}
+</style></head>
+<body>
+<header><div><h1>Empadronamiento Provincial de Artesanos y Traductores Comunitarios</h1><p>Ministerio de Cultura y Turismo de Jujuy · Formulario digital de inscripción</p></div></header>
+<main>
+<div class="net offline" id="net" role="status" aria-live="polite">Verificando conexión...</div>
+<div class="notice" id="connectivity">Podés completar el formulario desde tu celular. La información se guarda temporalmente en este dispositivo mientras completás los campos.</div>
+<form id="form" novalidate>
+<section class="card"><h2>1. Datos personales</h2><div class="grid">
+<div class="field"><label for="apellido">Apellido *</label><input id="apellido" maxlength="60" autocomplete="family-name" placeholder="Ej.: Cruz" required><span class="error" id="err-apellido"></span></div>
+<div class="field"><label for="nombre">Nombre *</label><input id="nombre" maxlength="80" autocomplete="given-name" placeholder="Ej.: Juana María" required><span class="error" id="err-nombre"></span></div>
+<div class="field"><label for="cuil">CUIL *</label><input id="cuil" inputmode="numeric" maxlength="11" placeholder="11 dígitos, sin guiones" required><span class="error" id="err-cuil"></span></div>
+<div class="field"><label for="edad">Edad del titular *</label><input id="edad" type="number" min="18" max="100" step="1" inputmode="numeric" required><span class="error" id="err-edad"></span></div>
+<div class="field full"><label for="telefono">Teléfono celular *</label><input id="telefono" type="tel" inputmode="numeric" maxlength="15" placeholder="Ingresá el número sin espacios ni símbolos" required><p class="hint">Ingresá solo números; la longitud válida puede variar.</p><span class="error" id="err-telefono"></span></div>
+</div></section>
+<section class="card"><h2>2. Datos de la actividad</h2><div class="grid">
+<div class="field full"><label for="rubro">Rubro artesanal *</label>
+<select id="rubro" required>
+<option value="">Elegí una opción</option>
+<option value="Tejido">Tejido</option>
+<option value="Cerámica">Cerámica</option>
+<option value="Platería">Platería</option>
+</select><span class="error" id="err-rubro"></span></div>
+<div class="field full"><label for="taller">Taller / galpón de producción *</label><input id="taller" maxlength="120" required><span class="error" id="err-taller"></span></div>
+<div class="field full"><label for="domicilio">Domicilio del taller *</label><input id="domicilio" maxlength="180" required><span class="error" id="err-domicilio"></span></div>
+</div></section>
+<section class="card"><h2>3. Revisión y declaración jurada</h2><p>Revisá los datos ingresados antes de confirmar. La declaración jurada debe aceptarse antes de la firma virtual.</p>
+<p class="hint">Declaro que la información ingresada en este formulario es verdadera y completa, y que me hago responsable de los datos proporcionados.</p>
+<div class="checkrow" style="margin-top:14px"><input id="acepto" type="checkbox" required><label for="acepto">Leí y acepto la declaración jurada. *</label></div><span class="error" id="err-acepto"></span></section>
+<section class="card"><h2>4. Firma virtual y envío</h2><p class="hint" style="margin-bottom:14px">Ejemplo demostrativo: no envía datos a una institución ni reemplaza una firma digital oficial.</p>
+<div class="field"><label for="firma">Escribí tu apellido y nombre completos como firma virtual *</label>
+<p class="hint">Escribí primero el <strong>apellido</strong> y después el <strong>nombre</strong>, igual que en la sección 1 (por ejemplo: Cruz Juana María).</p>
+<input id="firma" maxlength="140" placeholder="Ej.: Cruz Juana María" required><span class="error" id="err-firma"></span></div>
+<button type="button" class="secondary" id="reviewBtn">Revisar mis datos</button>
+<div id="reviewArea" hidden><h2 style="margin-top:18px">Resumen para revisar</h2><div class="review" id="summary"></div><button type="submit" class="primary" style="margin-top:12px">Confirmar formulario (demo)</button><button type="button" class="secondary" id="editBtn">Corregir datos</button></div><div id="status" role="status" aria-live="polite"></div>
+</section></form></main>
+<footer>Formulario demostrativo para una actividad académica. No ingreses información real sensible en una versión pública de prueba.</footer>
+<script>
+const form=document.getElementById('form'),ids=['apellido','nombre','cuil','edad','telefono','rubro','taller','domicilio','firma'];
+const el=id=>document.getElementById(id);
+const DRAFT='borradorRegistroArtesanos',PEND='envioPendienteArtesanos';
+function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function lsDel(k){try{localStorage.removeItem(k)}catch(e){}}
+function validCUIL(v){if(!/^\d{11}$/.test(v))return false;const n=v.split('').map(Number),w=[5,4,3,2,7,6,5,4,3,2];let s=w.reduce((a,x,i)=>a+x*n[i],0),d=11-s%11;if(d===11)d=0;if(d===10)d=9;return d===n[10]}
+function validName(v){return /^[\p{L}\p{M} '\-]+$/u.test(v.trim())}
+function words(s){return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z ]/g,' ').split(/\s+/).filter(Boolean)}
+function getErrors(){
+ const e={},a=el('apellido').value.trim(),n=el('nombre').value.trim(),c=el('cuil').value.trim(),age=el('edad').value,t=el('telefono').value.trim(),f=el('firma').value.trim();
+ if(!a)e.apellido='Completá el apellido.';else if(a.length>60||!validName(a))e.apellido='Usá solo letras (con o sin tilde), espacios o guiones.';
+ if(!n)e.nombre='Completá el nombre.';else if(n.length>80||!validName(n))e.nombre='Usá solo letras (con o sin tilde), espacios o guiones.';
+ if(!/^\d{11}$/.test(c))e.cuil='El CUIL debe tener 11 dígitos, sin guiones.';else if(!validCUIL(c))e.cuil='Revisá el CUIL: el dígito verificador no coincide.';
+ if(!age)e.edad='Completá la edad.';else if(!Number.isInteger(Number(age))||Number(age)<18||Number(age)>100)e.edad='Ingresá una edad entera entre 18 y 100 años.';
+ if(!/^\d{8,15}$/.test(t))e.telefono='Ingresá solo números (entre 8 y 15 dígitos).';
+ if(!el('rubro').value)e.rubro='Elegí un rubro artesanal.';
+ ['taller','domicilio'].forEach(id=>{if(!el(id).value.trim())e[id]='Este campo es obligatorio.'});
+ if(!f)e.firma='Este campo es obligatorio.';
+ else{const fw=words(f),ok=words(a+' '+n);
+  if(fw.join(' ')!==ok.join(' ')){
+   e.firma=(fw.slice().sort().join(' ')===ok.slice().sort().join(' '))?'Escribí primero el apellido y después el nombre, como en la sección 1.':'La firma debe coincidir con el apellido y nombre ingresados arriba.'
+  }}
+ if(!el('acepto').checked)e.acepto='Debés aceptar la declaración jurada para continuar.';
+ return e
+}
+function show(id,msg){const m=msg||'';el('err-'+id).textContent=m;if(id!=='acepto'){el(id).classList.toggle('invalid',!!m);el(id).setAttribute('aria-invalid',m?'true':'false')}}
+function checkField(id){show(id,getErrors()[id])}
+function validate(){const e=getErrors();ids.concat(['acepto']).forEach(id=>show(id,e[id]));const k=Object.keys(e);if(k.length){el(k[0]).focus();return false}return true}
+function summary(){return [['Apellido','apellido'],['Nombre','nombre'],['CUIL','cuil'],['Edad','edad'],['Teléfono','telefono'],['Rubro artesanal','rubro'],['Taller / galpón','taller'],['Domicilio del taller','domicilio']].map(([k,id])=>k+': '+el(id).value).join('\n')+'\nDeclaración jurada: Aceptada\nFirma virtual: '+el('firma').value}
+function save(){try{let d={};ids.concat(['acepto']).forEach(id=>d[id]=el(id).type==='checkbox'?el(id).checked:el(id).value);localStorage.setItem(DRAFT,JSON.stringify(d));el('connectivity').textContent='Borrador guardado temporalmente en este dispositivo. En dispositivos compartidos, evitá guardar datos personales.'}catch(e){el('connectivity').textContent='No se pudo guardar el borrador. Evitá cerrar la página hasta terminar.'}}
+function comprobante(){return 'ART-2026-'+String(Math.floor(100000+Math.random()*900000))+' ('+new Date().toLocaleString('es-AR')+')'}
+let ONLINE=false;
+async function ping(){
+ if(!navigator.onLine)return false;
+ const c=new AbortController(),t=setTimeout(()=>c.abort(),4000);
+ try{await fetch('https://www.gstatic.com/generate_204?'+Date.now(),{mode:'no-cors',cache:'no-store',signal:c.signal});return true}
+ catch(e){return false}
+ finally{clearTimeout(t)}
+}
+async function refreshNet(){
+ const on=await ping(),changed=on!==ONLINE;ONLINE=on;
+ const n=el('net');n.className='net '+(on?'online':'offline');
+ n.textContent=on?'Conectado a internet.':'Sin conexión: tus datos se guardan en este celular y podrás enviarlos cuando vuelva la señal.';
+ if(on&&changed)sendPending()
+}
+function sendPending(){
+ if(!ONLINE||!lsGet(PEND))return;
+ lsDel(PEND);lsDel(DRAFT);
+ const s=el('status');s.className='notice';
+ s.textContent='Volvió la conexión: el formulario pendiente se envió automáticamente (simulado). Comprobante de trámite: '+comprobante()+'. Los datos no fueron enviados a ninguna institución. Para un uso real, debe conectarse a un servidor seguro.'
+}
+function showPending(){
+ if(!lsGet(PEND))return;
+ const s=el('status');s.className='notice';s.textContent='Tenés un formulario pendiente de envío. Se enviará automáticamente cuando vuelva la señal.'
+}
+window.addEventListener('online',refreshNet);
+window.addEventListener('offline',refreshNet);
+try{let d=JSON.parse(lsGet(DRAFT)||'{}');Object.keys(d).forEach(id=>{if(el(id)){if(el(id).type==='checkbox')el(id).checked=!!d[id];else el(id).value=d[id]}})}catch(e){}
+showPending();
+refreshNet();setInterval(refreshNet,8000);
+form.addEventListener('focusout',ev=>{if(ids.includes(ev.target.id))checkField(ev.target.id)});
+form.addEventListener('input',ev=>{const t=ev.target;if(t.classList&&t.classList.contains('invalid'))checkField(t.id);save();el('reviewArea').hidden=true;el('status').textContent=''});
+form.addEventListener('change',ev=>{if(ids.concat(['acepto']).includes(ev.target.id))checkField(ev.target.id);save()});
+el('reviewBtn').addEventListener('click',()=>{if(!validate()){el('status').textContent='Hay datos para corregir. Revisá los mensajes marcados.';return}el('summary').textContent=summary();el('reviewArea').hidden=false;el('status').textContent='Revisá el resumen y confirmá si todo está correcto.';el('reviewArea').scrollIntoView({behavior:'smooth',block:'start'})});
+el('editBtn').addEventListener('click',()=>{el('reviewArea').hidden=true;el('status').textContent='';el('apellido').scrollIntoView({behavior:'smooth',block:'center'});el('apellido').focus()});
+form.addEventListener('submit',ev=>{ev.preventDefault();if(!validate())return;const s=el('status');s.className='notice';
+ if(!ONLINE){lsSet(PEND,JSON.stringify({fecha:new Date().toISOString(),datos:summary()}));s.textContent='Sin conexión: el formulario quedó guardado en este celular como pendiente de envío. Se enviará automáticamente cuando vuelva la señal.';return}
+ lsDel(DRAFT);
+ s.textContent='Demostración completada. Comprobante de trámite: '+comprobante()+'. Los datos no fueron enviados a ninguna institución. Para un uso real, debe conectarse a un servidor seguro.'});
+</script></body></html>
